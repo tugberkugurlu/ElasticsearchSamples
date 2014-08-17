@@ -18,6 +18,11 @@ namespace MoviesSample
             ConnectionSettings settings = new ConnectionSettings(node, defaultIndex: "movies-test");
             _client = new ElasticClient(settings);
 
+            // PopulateTheEngine();
+        }
+
+        static void PopulateTheEngine()
+        {
             const string filePath = @"C:\Dev\imdb.json\imdb.json";
             using (Stream fileStream = File.OpenRead(filePath))
             using (StreamReader reader = new StreamReader(fileStream))
