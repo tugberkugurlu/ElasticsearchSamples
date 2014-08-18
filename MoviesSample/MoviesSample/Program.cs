@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 using Nest;
 using Newtonsoft.Json;
 using System;
@@ -14,11 +16,62 @@ namespace MoviesSample
 
         static void Main(string[] args)
         {
-            Uri node = new Uri("http://localhost:9200");
+            Uri node = new Uri("http://localhost:9200/");
             ConnectionSettings settings = new ConnectionSettings(node, defaultIndex: "movies-test");
             _client = new ElasticClient(settings);
 
             // PopulateTheEngine();
+            Query1();
+            Query2();
+            Query3();
+        }
+
+        static void Query1()
+        {
+            // This will return every movie whose name contains 'superman returns' or 'superman' or 'returns'.
+            // if it contains both 'superman returns', the score will be higher.
+
+            ISearchResponse<Movie> response = _client.Search<Movie>(sDesc => sDesc
+                .From(0)
+                .Size(10)
+                .Query(q => q.Match(d => d.OnField(m => m.Name)
+                    .Query("Superman returns")
+                    .Operator(Operator.Or))));
+
+            string request = Encoding.UTF8.GetString(response.RequestInformation.Request);
+            Console.WriteLine("Request: {0}", request);
+        }
+
+        static void Query2()
+        {
+            // This will return every movie whose name contains 'superman returns'.
+
+            ISearchResponse<Movie> response = _client.Search<Movie>(sDesc => sDesc
+                .From(0)
+                .Size(10)
+                .Query(q => q.Match(d => d.OnField(m => m.Name)
+                    .Query("Superman returns")
+                    .Operator(Operator.And))));
+
+            string request = Encoding.UTF8.GetString(response.RequestInformation.Request);
+            Console.WriteLine("Request: {0}", request);
+        }
+
+        static void Query3()
+        {
+            //QueryContainer matchQuery = Query<Movie>.Match(d => d.OnField(m => m.Name).Query("Batman"));
+            //QueryContainer shouldQuery = Query<Movie>.Bool(bq => bq.Should(sq => sq.Range(d => d.OnField(m => m.Year).Greater(2010))));
+
+            //var nestedQuery = Query<Movie>.Nested(nd => nd
+            //    .Query(q => q.Match(d => d.OnField(m => m.Name).Query("Batman")))
+            //    .Query(q => q.Bool(bq => bq.Should(sq => sq.Range(d => d.OnField(m => m.Year).Greater(2010))))));
+
+            var response = _client.Search<Movie>(desc => desc.Query(q => q.Bool(bq => bq
+                .Must(mq => mq.Match(d => d.OnField(m => m.Name).Query("Batman")))
+                .Should(sq => sq.Range(d => d.OnField(m => m.Year).Greater(2010))))));
+
+            string request = Encoding.UTF8.GetString(response.RequestInformation.Request);
+            Console.WriteLine("Request: {0}", request);
         }
 
         static void PopulateTheEngine()
@@ -121,6 +174,10 @@ namespace MoviesSample
          */
 
         private static readonly Regex Regex = new Regex(@"^.*?\([^\d]*(\d+)[^\d]*\).*$", RegexOptions.Compiled);
+
+        public Movie()
+        {
+        }
 
         public Movie(IDictionary<string, object> values)
         {
