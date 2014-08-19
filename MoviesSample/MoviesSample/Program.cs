@@ -59,12 +59,7 @@ namespace MoviesSample
 
         static void Query3()
         {
-            //QueryContainer matchQuery = Query<Movie>.Match(d => d.OnField(m => m.Name).Query("Batman"));
-            //QueryContainer shouldQuery = Query<Movie>.Bool(bq => bq.Should(sq => sq.Range(d => d.OnField(m => m.Year).Greater(2010))));
-
-            //var nestedQuery = Query<Movie>.Nested(nd => nd
-            //    .Query(q => q.Match(d => d.OnField(m => m.Name).Query("Batman")))
-            //    .Query(q => q.Bool(bq => bq.Should(sq => sq.Range(d => d.OnField(m => m.Year).Greater(2010))))));
+            // Two bool queries together. One must and one should
 
             var response = _client.Search<Movie>(desc => desc.Query(q => q.Bool(bq => bq
                 .Must(mq => mq.Match(d => d.OnField(m => m.Name).Query("Batman")))
