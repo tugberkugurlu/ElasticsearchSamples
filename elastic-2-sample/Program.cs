@@ -15,6 +15,12 @@ namespace ConsoleApplication
         {
             var loopupTerm = "star \"";
             var client = new ElasticLowLevelClient();
+
+            UnsafeQueryTemplateSample(client, loopupTerm);
+        }
+
+        private static void UnsafeQueryTemplateSample(ElasticLowLevelClient client, string loopupTerm) 
+        {
             var aggsQueryFilePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "aggs-query.json");
             var queryTemplate = ReadToEnd(aggsQueryFilePath);
             var queryToIssue = queryTemplate.Replace("@lookupTerm", $"\"{loopupTerm}\"");
