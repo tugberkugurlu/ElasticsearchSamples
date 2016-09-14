@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Elasticsearch.Net;
 using Microsoft.Extensions.PlatformAbstractions;
@@ -6,6 +7,33 @@ using Nest;
 
 namespace ConsoleApplication
 {
+    [ElasticsearchType(Name = "movie")]
+    public class MovieSearchItem 
+    {
+        /// <summary>
+        /// Elasticsearch id of the document.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// The Id of the Movie inside the primary data storage system.
+        /// </summary>
+        [String(Index = FieldIndexOption.NotAnalyzed)]
+        public string PrimaryId { get; set; }
+        public string Name { get; set; }
+        public int ReleaseYear { get; set; }
+        public double Rating { get; set; }
+        public long RatingCount { get; set; }
+        public IEnumerable<string> Tags { get; set; }
+        public IEnumerable<Actor> Actors { get; set; }
+    }
+
+    public class Actor 
+    {
+        public string Name { get; set; }
+        public string Playing { get; set; }
+    }
+
     public class Program
     {
         // Connecting: https://www.elastic.co/guide/en/elasticsearch/client/net-api/2.x/connecting.html
