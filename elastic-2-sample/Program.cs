@@ -25,7 +25,7 @@ namespace ConsoleApplication
         public double Rating { get; set; }
         public long RatingCount { get; set; }
         public IEnumerable<string> Tags { get; set; }
-        public IEnumerable<Actor> Actors { get; set; }
+        public IEnumerable<Actor> MainActors { get; set; }
     }
 
     public class Actor 
