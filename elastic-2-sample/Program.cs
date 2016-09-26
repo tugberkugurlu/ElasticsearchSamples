@@ -45,11 +45,14 @@ namespace ConsoleApplication
 
         public static void Main(string[] args)
         {
-            var elasticClient = new ElasticClient();
             var indexName = "movie-app";
+            var settings = new ConnectionSettings().DefaultIndex(indexName);
+            var elasticClient = new ElasticClient(settings);
+
             elasticClient.DeleteIndex(indexName);
             LoadMovies(elasticClient, indexName);
             var movies = SearchForTerm(elasticClient, "star");
+            var goodMovies = SearchForTermAndRating(elasticClient, "star", 8);
 
             var loopupTerm = "star";
             var client = new ElasticLowLevelClient();
@@ -92,7 +95,34 @@ namespace ConsoleApplication
             {
                 elasticClient.Serializer.Serialize(searchRequest, stream);
                 stream.Seek(0, SeekOrigin.Begin);
-                
+
+                using(var reader = new StreamReader(stream)) 
+                {
+                    Console.WriteLine("Query to run:");                    
+                    Console.WriteLine(reader.ReadToEnd());
+                }
+            }
+
+            var searchResult = elasticClient.Search<MovieSearchItem>(searchRequest);
+
+            return searchResult.Hits.Select(x => x.Source);
+        }
+
+        private static IEnumerable<MovieSearchItem> SearchForTermAndRating(IElasticClient elasticClient, string lookupTerm, int rating) 
+        {
+            var searchRequest = new SearchRequest<MovieSearchItem>
+            {
+                From = 0,
+                Size = 50,
+                Query = new TermQuery { Field = Infer.Field<MovieSearchItem>(m => m.Name), Value = "star" } &&
+                    new NumericRangeQuery { Field = Infer.Field<MovieSearchItem>(m => m.Rating), GreaterThanOrEqualTo = rating }
+            };
+
+            using(var stream = new MemoryStream())
+            {
+                elasticClient.Serializer.Serialize(searchRequest, stream);
+                stream.Seek(0, SeekOrigin.Begin);
+
                 using(var reader = new StreamReader(stream)) 
                 {
                     Console.WriteLine("Query to run:");                    
