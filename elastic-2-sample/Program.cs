@@ -47,12 +47,11 @@ namespace ConsoleApplication
         {
             var elasticClient = new ElasticClient();
             var indexName = "movie-app";
-
             elasticClient.DeleteIndex(indexName);
-
             LoadMovies(elasticClient, indexName);
+            var movies = SearchForTerm(elasticClient, "star");
 
-            var loopupTerm = "star \"";
+            var loopupTerm = "star";
             var client = new ElasticLowLevelClient();
             UnsafeQueryTemplateSample(client, loopupTerm);
         }
@@ -79,6 +78,33 @@ namespace ConsoleApplication
             var movies = GetMovies().ToList();
             foreach (var movie in movies) elasticClient.Index(movie, i => i.Index(indexName));
         } 
+
+        private static IEnumerable<MovieSearchItem> SearchForTerm(IElasticClient elasticClient, string lookupTerm) 
+        {
+            var searchRequest = new SearchRequest<MovieSearchItem>
+            {
+                From = 0,
+                Size = 50,
+                Query = new TermQuery { Field = Infer.Field<MovieSearchItem>(m => m.Name), Value = "star" }
+            };
+
+            using(var stream = new MemoryStream())
+            {
+                elasticClient.Serializer.Serialize(searchRequest, stream);
+                
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using(var reader = new StreamReader(stream)) 
+                {
+                    Console.WriteLine("Query to run:");                    
+                    Console.WriteLine(reader.ReadToEnd());
+                }
+            }
+
+            var searchResult = elasticClient.Search<MovieSearchItem>(searchRequest);
+
+            return searchResult.Hits.Select(x => x.Source);
+        }
 
         private static IEnumerable<MovieSearchItem> GetMovies() 
         {
