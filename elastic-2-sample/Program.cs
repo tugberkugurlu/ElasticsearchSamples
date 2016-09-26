@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Elasticsearch.Net;
 using Microsoft.Extensions.PlatformAbstractions;
 using Nest;
+using Newtonsoft.Json;
 
 namespace ConsoleApplication
 {
-    [ElasticsearchType(Name = "movie")]
+    [ElasticsearchType(Name = "movies")]
     public class MovieSearchItem 
     {
         /// <summary>
@@ -25,6 +27,8 @@ namespace ConsoleApplication
         public double Rating { get; set; }
         public long RatingCount { get; set; }
         public IEnumerable<string> Tags { get; set; }
+
+        [Nested]
         public IEnumerable<Actor> MainActors { get; set; }
     }
 
@@ -41,10 +45,59 @@ namespace ConsoleApplication
 
         public static void Main(string[] args)
         {
+            var elasticClient = new ElasticClient();
+            var indexName = "movie-app";
+
+            elasticClient.DeleteIndex(indexName);
+
+            LoadMovies(elasticClient, indexName);
+
             var loopupTerm = "star \"";
             var client = new ElasticLowLevelClient();
-
             UnsafeQueryTemplateSample(client, loopupTerm);
+        }
+
+        private static void LoadMovies(IElasticClient elasticClient, string indexName) 
+        {
+            var settingsResponse = elasticClient.GetIndexSettingsAsync(x => x.Index(indexName)).Result;
+            if (settingsResponse.ServerError?.Status == 404)
+            {
+                var response = elasticClient.CreateIndexAsync(indexName, d => d
+                    .Mappings(ms => ms
+                        .Map<MovieSearchItem>(m => m.AutoMap())
+                    )
+                ).Result;
+
+                if (response.IsValid == false)
+                {
+                    throw new Exception(string.Format("{0}: {1}", 
+                        response.ServerError.Status,
+                        response.ServerError.Error), response.OriginalException);
+                }
+            }
+
+            var movies = GetMovies().ToList();
+            foreach (var movie in movies) elasticClient.Index(movie, i => i.Index(indexName));
+        } 
+
+        private static IEnumerable<MovieSearchItem> GetMovies() 
+        {
+            var folderPath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "movies");
+            var files = Directory.EnumerateFiles(folderPath, "*.json", SearchOption.TopDirectoryOnly);
+            foreach (var filePath in files)
+            {
+                var fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                using(var file = File.OpenRead(filePath))
+                using(var reader = new StreamReader(file))
+                {
+                    var content = reader.ReadToEnd();
+                    var movie = JsonConvert.DeserializeObject<MovieSearchItem>(content);
+                    movie.PrimaryId = fileName;
+
+                    yield return movie;
+                }
+            }
         }
 
         private static void UnsafeQueryTemplateSample(ElasticLowLevelClient client, string loopupTerm) 
