@@ -1,0 +1,15 @@
+{
+    "name": "The Dark Knight Rises",
+    "releaseYear": 2012,
+    "rating": 8.5,
+    "ratingCount": 1152348,
+    "tags": [
+        "gotham", "fight", "superheros", "batman", "catwoman"
+    ],
+    "mainActors": [
+        { "name": "Christian Bale", "playing": "Bruce Wayne" },
+        { "name": "Anne Hathaway", "playing": "Selina" },
+        { "name": "Joseph Gordon-Levitt", "playing": "Blake" },
+        { "name": "Morgan Freeman", "playing": "Lucius Fox" }
+    ]
+}

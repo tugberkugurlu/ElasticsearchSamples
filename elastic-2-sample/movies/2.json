@@ -1,0 +1,14 @@
+{
+    "name": "The Dark Knight",
+    "releaseYear": 2008,
+    "rating": 8.6,
+    "ratingCount": 1687800,
+    "tags": [
+        "gotham", "fight", "superheros", "batman"
+    ],
+    "mainActors": [
+        { "name": "Christian Bale", "playing": "Bruce Wayne" },
+        { "name": "Heath Ledger", "playing": "Joker" },
+        { "name": "Morgan Freeman", "playing": "Lucius Fox" }
+    ]
+}

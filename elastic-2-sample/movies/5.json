@@ -1,0 +1,15 @@
+{
+    "name": "Inception",
+    "releaseYear": 2010,
+    "rating": 8.8,
+    "ratingCount": 1478535,
+    "tags": [
+        "dream", "sleep", "steal"
+    ],
+    "mainActors": [
+        { "name": "Leonardo DiCaprio", "playing": "Cobb" },
+        { "name": "Joseph Gordon-Levitt", "playing": "Arthur" },
+        { "name": "Ellen Page", "playing": "Ariadne" },
+        { "name": "Michael Caine", "playing": "Miles" }
+    ]
+}

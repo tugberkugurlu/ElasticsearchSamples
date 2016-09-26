@@ -1,0 +1,15 @@
+{
+    "name": "Star Trek Into Darkness",
+    "releaseYear": 2013,
+    "rating": 7.8,
+    "ratingCount": 398587,
+    "tags": [
+        "enterprise", "space", "crew"
+    ],
+    "mainActors": [
+        { "name": "Chris Pine", "playing": "Kirk" },
+        { "name": "Zachary Quinto", "playing": "Spock" },
+        { "name": "Zoe Saldana", "playing": "Uhura" },
+        { "name": "Benedict Cumberbatch", "playing": "Khan" }
+    ]
+}

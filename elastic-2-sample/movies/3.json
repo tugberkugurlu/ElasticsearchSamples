@@ -1,0 +1,14 @@
+{
+    "name": "Slumdog Millionaire",
+    "releaseYear": 2008,
+    "rating": 8.0,
+    "ratingCount": 644922,
+    "tags": [
+        "millionaire", "luck", "rich", "india"
+    ],
+    "mainActors": [
+        { "name": "Dev Patel", "playing": "Older Jamal" },
+        { "name": "Anil Kapoor", "playing": "Prem" },
+        { "name": "Freida Pinto", "playing": "Older Latika" }
+    ]
+}

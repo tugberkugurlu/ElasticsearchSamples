@@ -1,0 +1,13 @@
+{
+    "name": "Se7en",
+    "releaseYear": 1995,
+    "rating": 8.6,
+    "ratingCount": 1031122,
+    "tags": [
+        "serial killer", "detectives"
+    ],
+    "mainActors": [
+        { "name": "Morgan Freeman", "playing": "Somerset" },
+        { "name": "Brad Pitt", "playing": "Mills" }
+    ]
+}

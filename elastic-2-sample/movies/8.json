@@ -1,0 +1,16 @@
+{
+    "name": "Star Trek Beyond",
+    "releaseYear": 2016,
+    "rating": 7.4,
+    "ratingCount": 69010,
+    "tags": [
+        "enterprise", "space", "crew"
+    ],
+    "mainActors": [
+        { "name": "Chris Pine", "playing": "Captain James T. Kirk" },
+        { "name": "Zachary Quinto", "playing": "Commander Spock" },
+        { "name": "Zoe Saldana", "playing": "Lieutenant Uhura" },
+        { "name": "Sofia Boutella", "playing": "Jaylah" },
+        { "name": "Idris Elba", "playing": "Krall" }
+    ]
+}

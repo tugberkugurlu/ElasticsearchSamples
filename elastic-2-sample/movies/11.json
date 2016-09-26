@@ -1,0 +1,14 @@
+{
+    "name": "Star Wars: Episode III - Revenge of the Sith",
+    "releaseYear": 2005,
+    "rating": 7.6,
+    "ratingCount": 523172,
+    "tags": [
+        "space", "resistance", "empire", "force"
+    ],
+    "mainActors": [
+        { "name": "Ewan McGregor", "playing": "Obi-Wan Kenobi" },
+        { "name": "Natalie Portman", "playing": "Padmé" },
+        { "name": "Hayden Christensen", "playing": "Anakin Skywalker" }
+    ]
+}

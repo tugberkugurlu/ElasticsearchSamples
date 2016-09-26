@@ -1,0 +1,17 @@
+{
+    "name": "Star Wars: The Force Awakens",
+    "releaseYear": 2015,
+    "rating": 8.2,
+    "ratingCount": 576413,
+    "tags": [
+        "space", "resistance", "empire", "force"
+    ],
+    "mainActors": [
+        { "name": "Harrison Ford", "playing": "Han Solo" },
+        { "name": "Mark Hamill", "playing": "Luke Skywalker" },
+        { "name": "Carrie Fisher", "playing": "Princess Leia" },
+        { "name": "Adam Driver", "playing": "Kylo Ren" },
+        { "name": "Daisy Ridley", "playing": "Rey" },
+        { "name": "John Boyega", "playing": "Finn" }
+    ]
+}

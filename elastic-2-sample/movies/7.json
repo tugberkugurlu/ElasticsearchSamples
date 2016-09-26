@@ -1,0 +1,15 @@
+{
+    "name": "Star Trek",
+    "releaseYear": 2009,
+    "rating": 8.0,
+    "ratingCount": 507480,
+    "tags": [
+        "enterprise", "space", "crew"
+    ],
+    "mainActors": [
+        { "name": "Chris Pine", "playing": "Kirk" },
+        { "name": "Zachary Quinto", "playing": "Spock" },
+        { "name": "Zoe Saldana", "playing": "Uhura" },
+        { "name": "Leonard Nimoy", "playing": "Spock Prime" }
+    ]
+}
