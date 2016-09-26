@@ -91,9 +91,8 @@ namespace ConsoleApplication
             using(var stream = new MemoryStream())
             {
                 elasticClient.Serializer.Serialize(searchRequest, stream);
-                
                 stream.Seek(0, SeekOrigin.Begin);
-
+                
                 using(var reader = new StreamReader(stream)) 
                 {
                     Console.WriteLine("Query to run:");                    
