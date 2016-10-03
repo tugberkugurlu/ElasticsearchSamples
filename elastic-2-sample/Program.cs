@@ -54,6 +54,8 @@ namespace ConsoleApplication
             var movies = SearchForTerm(elasticClient, "star");
             var goodMovies = SearchForTermAndRating(elasticClient, "star", 8);
 
+            LoadMovieGroups(elasticClient);
+
             var loopupTerm = "star";
             var client = new ElasticLowLevelClient();
             UnsafeQueryTemplateSample(client, loopupTerm);
@@ -91,21 +93,46 @@ namespace ConsoleApplication
                 Query = new TermQuery { Field = Infer.Field<MovieSearchItem>(m => m.Name), Value = "star" }
             };
 
-            using(var stream = new MemoryStream())
-            {
-                elasticClient.Serializer.Serialize(searchRequest, stream);
-                stream.Seek(0, SeekOrigin.Begin);
-
-                using(var reader = new StreamReader(stream)) 
-                {
-                    Console.WriteLine("Query to run:");                    
-                    Console.WriteLine(reader.ReadToEnd());
-                }
-            }
+            Console.WriteLine("Query to run:");
+            Console.WriteLine(GetQuery(elasticClient, searchRequest));
 
             var searchResult = elasticClient.Search<MovieSearchItem>(searchRequest);
 
             return searchResult.Hits.Select(x => x.Source);
+        }
+
+        private static void LoadMovieGroups(IElasticClient elasticClient) 
+        {
+            var searchRequest = new SearchRequest<MovieSearchItem>
+            {
+                Size = 0,
+                Aggregations = new TermsAggregation("by_tags") 
+                {
+                    Field = Infer.Field<MovieSearchItem>(m => m.Tags)
+                } && new TermsAggregation("by_release_year") 
+                {
+                    Field = Infer.Field<MovieSearchItem>(m => m.ReleaseYear)
+                }
+            };
+
+            Console.WriteLine("Query to run:");
+            Console.WriteLine(GetQuery(elasticClient, searchRequest));
+
+            var searchResult = elasticClient.Search<MovieSearchItem>(searchRequest);
+            var tagsAgg = searchResult.Aggs.Terms("by_tags");
+            var yearsAgg = searchResult.Aggs.Terms("by_release_year");
+
+            Console.WriteLine("tags:");
+            foreach (var tagsBucket in tagsAgg.Buckets)
+            {
+                Console.WriteLine($"{tagsBucket.Key}-{tagsBucket.DocCount}");
+            }
+
+            Console.WriteLine("tags:");
+            foreach (var yearsBucket in yearsAgg.Buckets)
+            {
+                Console.WriteLine($"{yearsBucket.Key}-{yearsBucket.DocCount}");
+            }     
         }
 
         private static IEnumerable<MovieSearchItem> SearchForTermAndRating(IElasticClient elasticClient, string lookupTerm, int rating) 
@@ -118,17 +145,8 @@ namespace ConsoleApplication
                     new NumericRangeQuery { Field = Infer.Field<MovieSearchItem>(m => m.Rating), GreaterThanOrEqualTo = rating }
             };
 
-            using(var stream = new MemoryStream())
-            {
-                elasticClient.Serializer.Serialize(searchRequest, stream);
-                stream.Seek(0, SeekOrigin.Begin);
-
-                using(var reader = new StreamReader(stream)) 
-                {
-                    Console.WriteLine("Query to run:");                    
-                    Console.WriteLine(reader.ReadToEnd());
-                }
-            }
+            Console.WriteLine("Query to run:");
+            Console.WriteLine(GetQuery(elasticClient, searchRequest));
 
             var searchResult = elasticClient.Search<MovieSearchItem>(searchRequest);
 
@@ -151,6 +169,20 @@ namespace ConsoleApplication
                     movie.PrimaryId = fileName;
 
                     yield return movie;
+                }
+            }
+        }
+
+        private static string GetQuery<T>(IElasticClient client, SearchRequest<T> request) 
+        {
+            using(var stream = new MemoryStream())
+            {
+                client.Serializer.Serialize(request, stream);
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using(var reader = new StreamReader(stream)) 
+                {
+                    return reader.ReadToEnd();
                 }
             }
         }
